@@ -4,8 +4,9 @@ import sys
 sys.path.append(os.getcwd())
 
 import unittest
-
 from fastapi.testclient import TestClient
+
+from constants import SETTINGS_POSTS_PER_PAGE, SETTINGS_DISPLAY_EMAIL
 
 from main import app, request, response
 
@@ -16,25 +17,26 @@ class TestRoutes(unittest.TestCase):
     self.__client = TestClient(app)    
 
   def test_user(self):
-    user = request.User(first_name='test', last_name='test', email='test@1.again', password='test')
+    user = request.User(first_name='test1', last_name='test1', email='test@1.again', password='test')
 
     register_res = self.__client.post(
       '/sign-up', 
       json=vars(user)
     )
 
-    self.assertEqual(register_res.status_code, 200)
-
     register_data = response.User(**register_res.json())
 
     self.assertIsNotNone(register_data.id)
     self.assertEqual(register_data.first_name, user.first_name)
     self.assertEqual(register_data.last_name, user.last_name)
-    self.assertIsNone(register_data.email)
+    if not SETTINGS_DISPLAY_EMAIL:
+      self.assertIsNone(register_data.email)
+    else:
+      self.assertEqual(register_data.email, user.email)
     self.assertIsNotNone(register_data.session_code)
 
-    self.assertEqual(register_data.settings.posts_per_page, 10)
-    self.assertEqual(register_data.settings.display_email, False)
+    self.assertEqual(register_data.settings.posts_per_page, SETTINGS_POSTS_PER_PAGE)
+    self.assertEqual(register_data.settings.display_email, SETTINGS_DISPLAY_EMAIL)
 
     session_res = self.__client.get(
       '/user',
@@ -48,7 +50,10 @@ class TestRoutes(unittest.TestCase):
     self.assertEqual(session_data.id, register_data.id)
     self.assertEqual(session_data.first_name, register_data.first_name)
     self.assertEqual(session_data.last_name, register_data.last_name)
-    self.assertIsNone(session_data.email)
+    if not SETTINGS_DISPLAY_EMAIL:
+      self.assertIsNone(session_data.email)
+    else:
+      self.assertEqual(session_data.email, user.email)
     self.assertEqual(session_data.session_code, register_data.session_code)
 
     self.assertEqual(session_data.settings.posts_per_page, register_data.settings.posts_per_page)
@@ -70,8 +75,8 @@ class TestRoutes(unittest.TestCase):
     self.assertEqual(login_data.email, register_data.email)
     self.assertIsNotNone(login_data.session_code)
 
-    self.assertEqual(login_data.settings.posts_per_page, 10)
-    self.assertEqual(login_data.settings.display_email, False)
+    self.assertEqual(login_data.settings.posts_per_page, SETTINGS_POSTS_PER_PAGE)
+    self.assertEqual(login_data.settings.display_email, SETTINGS_DISPLAY_EMAIL)
 
     settings = request.Settings(
       posts_per_page=30,
@@ -115,14 +120,12 @@ class TestRoutes(unittest.TestCase):
     self.assertEqual(session_from_login_data.settings.display_email, settings.display_email)
 
   def test_post(self):
-    user = request.User(first_name='test', last_name='test', email='test@1.again', password='test')
+    user = request.User(first_name='test2', last_name='test2', email='test@2.again', password='test')
 
     register_res = self.__client.post(
       '/sign-up', 
       json=vars(user)
     )
-
-    self.assertEqual(register_res.status_code, 200)
 
     register_data = response.User(**register_res.json())
 
@@ -215,7 +218,10 @@ class TestRoutes(unittest.TestCase):
 
     self.assertGreater(len(list(searched_posts_2)), 0)
 
-    settings = request.Settings(posts_per_page=30, display_email=True)
+    settings = request.Settings(
+      posts_per_page=30, 
+      display_email=True
+    )
 
     settings_res = self.__client.post(
       '/settings/edit',

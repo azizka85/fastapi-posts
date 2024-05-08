@@ -8,10 +8,10 @@ class Post(BaseModel):
   abstract: str = ''
 
   def to_data(self) -> data.Post:
-    post = data.Post()
-
-    post.title = self.title
-    post.text = self.text
-    post.abstract = self.abstract
-
-    return post
+    return data.Post(
+      self.title,
+      self.text,
+      self.abstract,
+      False,
+      None
+    )

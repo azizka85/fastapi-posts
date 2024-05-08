@@ -9,11 +9,9 @@ class User(BaseModel):
   password: str
 
   def to_data(self) -> data.User:
-    user = data.User()
-
-    user.first_name = self.first_name
-    user.last_name = self.last_name
-    user.email = self.email
-    user.password = self.password
-
-    return user
+    return data.User(
+      self.first_name,
+      self.last_name,
+      self.email,
+      self.password
+    )        

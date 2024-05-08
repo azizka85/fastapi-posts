@@ -9,16 +9,13 @@ import repository
 class User:
   __user_repository: repository.User
   __session_repository: repository.Session
-  __settings_repository: repository.Settings
 
   def __init__(
     self, user_repository: repository.User, 
-    session_repository: repository.Session,
-    settings_repository: repository.Settings
+    session_repository: repository.Session
   ):
     self.__user_repository = user_repository
     self.__session_repository = session_repository
-    self.__settings_repository = settings_repository
 
   def get_from_session(self, session_id: Union[int, None], session_code: str) -> Union[response.User, None]:
     if not session_id:
@@ -66,4 +63,4 @@ class User:
       
     settings_data = settings.to_data(user.id)
     
-    return self.__settings_repository.edit(settings_data)    
+    return self.__user_repository.edit(settings_data)    

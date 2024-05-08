@@ -15,3 +15,7 @@ class User(ABC):
   @abstractmethod
   def get_user_settings(self, id: int) -> Union[data.User, None]:
     pass
+
+  @abstractmethod
+  def edit(self, settings: data.Settings) -> bool:
+    pass

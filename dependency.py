@@ -5,13 +5,12 @@ from fastapi import Depends
 import service
 import repository.mocks
 
-settings_repository = repository.mocks.Settings()
-user_repository = repository.mocks.User(settings_repository)
+user_repository = repository.mocks.User()
 session_repository = repository.mocks.Session(user_repository)
 like_repository = repository.mocks.Like()
 post_repository = repository.mocks.Post(like_repository, user_repository)
 
-user_service = service.User(user_repository, session_repository, settings_repository)
+user_service = service.User(user_repository, session_repository)
 post_service = service.Post(post_repository)
 like_service = service.Like(like_repository)
 
