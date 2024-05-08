@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Union
 
-import models.data as data
+from models import data
 
 class User(ABC):
   @abstractmethod

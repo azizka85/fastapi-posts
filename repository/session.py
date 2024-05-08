@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Union
 
-import models.data as data
+from models import data
 
 class Session(ABC): 
   @abstractmethod
@@ -10,5 +10,9 @@ class Session(ABC):
   
   @abstractmethod
   def get_user_settings(self, session_id: int) -> Union[data.User, None]:
+    pass
+
+  @abstractmethod
+  def get_id_by_code(self, session_code: str) -> Union[int, None]:
     pass
     

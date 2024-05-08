@@ -1,6 +1,6 @@
 from typing import Dict, Union
 
-import models.data as data
+from models import data
 import repository
 
 class User(repository.User):
@@ -8,10 +8,14 @@ class User(repository.User):
   __tokens: Dict[str, int]
   __current_id: int
 
-  def __init__(self) -> None:
+  __settings_repository: repository.Settings
+
+  def __init__(self, settings_repository: repository.Settings) -> None:
     self.__users = {}
     self.__tokens = {}
     self.__current_id = 0
+
+    self.__settings_repository = settings_repository
 
   def create(self, user: data.User) -> Union[int, None]:
     token = f'{user.email}-{user.password}'
@@ -23,9 +27,14 @@ class User(repository.User):
       self.__current_id += 1
       user_id = self.__current_id
 
+      user.settings.user_id = user_id
+      self.__settings_repository.create(user.settings)
+
     if user_id:
       user.id = user_id
       user.settings.user_id = user_id
+
+      self.__settings_repository.edit(user.settings)
       
       self.__users[user_id] = user
       self.__tokens[token] = user_id
