@@ -8,12 +8,18 @@ from fastapi.testclient import TestClient
 
 from constants import SETTINGS_POSTS_PER_PAGE, SETTINGS_DISPLAY_EMAIL
 
-from main import app, request, response
+from main import app, request, response 
+import dependency
+import test_dependency
 
 class TestRoutes(unittest.TestCase):
   __client: TestClient
 
   def setUp(self):
+    app.dependency_overrides[dependency.get_user_service] = test_dependency.get_user_service
+    app.dependency_overrides[dependency.get_post_service] = test_dependency.get_post_service
+    app.dependency_overrides[dependency.get_like_service] = test_dependency.get_like_service
+
     self.__client = TestClient(app)    
 
   def test_user(self):

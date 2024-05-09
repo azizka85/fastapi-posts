@@ -34,7 +34,7 @@ class User(repository.User):
 
   def create_user_wc(self, user: data.User, conn: psycopg.Connection) -> Union[int, None]:
     id = None
-    pwd = str(hashlib.md5(user.password.encode())) # type: ignore
+    pwd = hashlib.md5(user.password.encode()).hexdigest() # type: ignore
 
     cur = conn.execute(
       '''
@@ -81,7 +81,7 @@ class User(repository.User):
   
   def get_id_wc(self, email: str, password: str, conn: psycopg.Connection) -> Union[int, None]:
     id = None
-    pwd = str(hashlib.md5(password.encode()))
+    pwd = hashlib.md5(password.encode()).hexdigest()
 
     cur = conn.execute(
       '''

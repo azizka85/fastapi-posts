@@ -3,12 +3,12 @@ from typing import Annotated
 from fastapi import Depends
 
 import service
-import repository.postgresql
+import repository.mocks
 
-user_repository = repository.postgresql.User()
-session_repository = repository.postgresql.Session(user_repository)
-like_repository = repository.postgresql.Like()
-post_repository = repository.postgresql.Post()
+user_repository = repository.mocks.User()
+session_repository = repository.mocks.Session(user_repository)
+like_repository = repository.mocks.Like()
+post_repository = repository.mocks.Post(like_repository, user_repository)
 
 user_service = service.User(user_repository, session_repository)
 post_service = service.Post(post_repository)
