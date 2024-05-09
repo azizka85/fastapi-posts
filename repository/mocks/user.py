@@ -1,4 +1,5 @@
 from typing import Dict, Union
+import copy
 
 from models import data
 import repository
@@ -34,10 +35,15 @@ class User(repository.User):
     return None
   
   def get_user_settings(self, id: int) -> Union[data.User, None]:
+    user = None
+
     if id in self.__users:
-      return self.__users[id]
+      user = copy.copy(self.__users[id])
+
+      if not user.settings.display_email:
+        user.email = None      
     
-    return None
+    return user
 
   def edit(self, settings: data.Settings) -> bool:
     if settings.user_id not in self.__users:

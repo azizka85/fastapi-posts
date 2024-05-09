@@ -162,6 +162,11 @@ class TestRoutes(unittest.TestCase):
 
     self.assertGreater(len(searched_posts), 0)
 
+    for item in searched_posts:
+      self.assertEqual(item.author.first_name, register_data.first_name) # type: ignore
+      self.assertEqual(item.author.last_name, register_data.last_name) # type: ignore
+      self.assertEqual(item.author.email, register_data.email) # type: ignore            
+
     post_res = self.__client.get(
       f'/{post_id}',
       headers={
@@ -217,6 +222,11 @@ class TestRoutes(unittest.TestCase):
     searched_posts_2 = filter(lambda p: p.id == post_id, liked_posts_data_2)
 
     self.assertGreater(len(list(searched_posts_2)), 0)
+
+    for item in searched_posts_2:
+      self.assertEqual(item.author.first_name, register_data.first_name) # type: ignore
+      self.assertEqual(item.author.last_name, register_data.last_name) # type: ignore
+      self.assertEqual(item.author.email, register_data.email) # type: ignore        
 
     settings = request.Settings(
       posts_per_page=30, 

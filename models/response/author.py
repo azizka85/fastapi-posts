@@ -10,8 +10,5 @@ class Author(BaseModel):
 
   def from_data(self, user: data.User):
     self.first_name = user.first_name
-    self.last_name = user.last_name
-
-    if user.settings.display_email:
-      self.email = user.email
-
+    self.last_name = user.last_name    
+    self.email = user.email

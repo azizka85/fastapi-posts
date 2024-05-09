@@ -7,6 +7,7 @@ from repository.mocks.user import User
 
 class Post(repository.Post):
   __posts: Dict[int, data.Post]
+  __authors: Dict[int, Union[int, None]]
   __current_id: int
 
   __like_repository: Like
@@ -14,6 +15,7 @@ class Post(repository.Post):
 
   def __init__(self, like_repository: Like, user_repository: User):
     self.__posts = {}
+    self.__authors = {}
     self.__current_id = 0
 
     self.__like_repository = like_repository
@@ -22,12 +24,10 @@ class Post(repository.Post):
   def create(self, user_id: Union[int, None], post: data.Post) -> Union[int, None]:
     self.__current_id += 1
 
-    post.id = self.__current_id
-    
-    if user_id:
-      post.author = self.__user_repository.get_user_settings(user_id)
+    post.id = self.__current_id    
     
     self.__posts[self.__current_id] = post
+    self.__authors[self.__current_id] = user_id
 
     return post.id
 
@@ -39,6 +39,11 @@ class Post(repository.Post):
 
     if id in self.__posts:
       post = self.__posts[id]
+
+      author_id = self.__authors[id]
+
+      if author_id:
+        post.author = self.__user_repository.get_user_settings(author_id)
 
       if id in liked:
         post.liked = True
@@ -58,6 +63,11 @@ class Post(repository.Post):
     posts = []
 
     for id, post in self.__posts.items():
+      author_id = self.__authors[id]
+
+      if author_id:
+        post.author = self.__user_repository.get_user_settings(author_id)
+
       if id in liked:
         post.liked = True
       else:
@@ -77,6 +87,11 @@ class Post(repository.Post):
 
     for id, post in self.__posts.items():
       if id in liked:
+        author_id = self.__authors[id]
+
+        if author_id:
+          post.author = self.__user_repository.get_user_settings(author_id)
+
         post.liked = True
         posts.append(post)
 
