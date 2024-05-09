@@ -160,8 +160,19 @@ class TestDB(unittest.TestCase):
       self.assertGreater(len(posts_list), 0)
 
       searched_posts = filter(lambda p: p.id == post_id, posts_list)
+      searched_posts_list = list(searched_posts)
 
-      self.assertGreater(len(list(searched_posts)), 0)
+      self.assertEqual(len(searched_posts_list), 1)
+
+      self.assertEqual(searched_posts_list[0].id, post_id) # type: ignore
+      self.assertEqual(searched_posts_list[0].title, post.title) # type: ignore
+      self.assertEqual(searched_posts_list[0].text, post.text) # type: ignore
+      self.assertEqual(searched_posts_list[0].abstract, post.abstract) # type: ignore
+      self.assertEqual(searched_posts_list[0].liked, post.liked) # type: ignore
+
+      self.assertEqual(searched_posts_list[0].author.id, user.id) # type: ignore
+      self.assertEqual(searched_posts_list[0].author.first_name, user.first_name) # type: ignore
+      self.assertEqual(searched_posts_list[0].author.last_name, user.last_name) # type: ignore
 
       liked_posts_list = self.__post_repository.liked_list_wc(user_id, conn)
 
@@ -183,5 +194,15 @@ class TestDB(unittest.TestCase):
       liked_posts_list_2 = self.__post_repository.liked_list_wc(user_id, conn)
 
       self.assertEqual(len(liked_posts_list_2), 1)
+
+      self.assertEqual(liked_posts_list_2[0].id, post_id) # type: ignore
+      self.assertEqual(liked_posts_list_2[0].title, post.title) # type: ignore
+      self.assertEqual(liked_posts_list_2[0].text, post.text) # type: ignore
+      self.assertEqual(liked_posts_list_2[0].abstract, post.abstract) # type: ignore
+      self.assertEqual(liked_posts_list_2[0].liked, True) # type: ignore
+
+      self.assertEqual(liked_posts_list_2[0].author.id, user.id) # type: ignore
+      self.assertEqual(liked_posts_list_2[0].author.first_name, user.first_name) # type: ignore
+      self.assertEqual(liked_posts_list_2[0].author.last_name, user.last_name) # type: ignore      
 
       conn.rollback()
