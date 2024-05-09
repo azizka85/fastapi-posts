@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 from typing import Annotated, Union, List
 
 from fastapi import Body, Depends, FastAPI, Header
+from fastapi.middleware.cors import CORSMiddleware
 
 import models.response as response
 import models.request as request
@@ -11,6 +12,16 @@ from dependency import UserServiceDependency, PostServiceDependency, LikeService
 load_dotenv()
 
 app = FastAPI()
+
+app.add_middleware(
+  CORSMiddleware,
+  allow_origins=[
+    'http://localhost:3000'
+  ],
+  allow_credentials=True,
+  allow_methods=["*"],
+  allow_headers=["*"]
+)
 
 @app.get('/user')
 def get_user_by_session_code(
