@@ -10,6 +10,9 @@ class User(repository.User):
   __current_id: int
 
   def __init__(self) -> None:
+    self.clear()
+
+  def clear(self):
     self.__users = {}
     self.__tokens = {}
     self.__current_id = 0

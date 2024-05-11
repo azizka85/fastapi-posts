@@ -11,11 +11,14 @@ class Session(repository.Session):
   __user_repository: repository.User
 
   def __init__(self, user_repository: repository.User):
+    self.clear()
+
+    self.__user_repository = user_repository
+
+  def clear(self):
     self.__codes = {}
     self.__ids = {}
     self.__current_id = 0
-
-    self.__user_repository = user_repository
 
   def create(self, user_id: int, code: str) -> Union[int, None]:
     self.__current_id += 1

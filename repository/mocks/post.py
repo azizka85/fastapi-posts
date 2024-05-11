@@ -14,12 +14,15 @@ class Post(repository.Post):
   __user_repository: User
 
   def __init__(self, like_repository: Like, user_repository: User):
-    self.__posts = {}
-    self.__authors = {}
-    self.__current_id = 0
+    self.clear()
 
     self.__like_repository = like_repository
     self.__user_repository = user_repository
+
+  def clear(self):
+    self.__posts = {}
+    self.__authors = {}
+    self.__current_id = 0
 
   def create(self, user_id: Union[int, None], post: data.Post) -> Union[int, None]:
     self.__current_id += 1

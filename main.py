@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import models.response as response
 import models.request as request
 
-from dependency import UserServiceDependency, PostServiceDependency, LikeServiceDependency
+import dependency
 
 load_dotenv()
 
@@ -23,9 +23,13 @@ app.add_middleware(
   allow_headers=["*"]
 )
 
+@app.get('/test/clear')
+def clear_test_data():
+  dependency.clear_test_data()
+
 @app.get('/user')
 def get_user_by_session_code(
-  user_service: UserServiceDependency,
+  user_service: dependency.UserServiceDependency,
   session_code: Annotated[Union[str, None], Header()] = None,  
 ) -> Union[response.User, None]:
   if not session_code:
@@ -39,21 +43,21 @@ UserBySessionCodeDependency = Annotated[Union[response.User, None], Depends(get_
 @app.post('/sign-in')
 def login(
   email: Annotated[str, Body()], password: Annotated[str, Body()],
-  user_service: UserServiceDependency
+  user_service: dependency.UserServiceDependency
 ) -> Union[response.User, None]:
   return user_service.login(email, password)
 
 @app.post('/sign-up')
 def register(
   user: request.User,
-  user_service: UserServiceDependency
+  user_service: dependency.UserServiceDependency
 ) -> Union[response.User, None]:
   return user_service.register(user)
 
 @app.post("/settings/edit")
 def edit_settings(
   user: UserBySessionCodeDependency,
-  user_service: UserServiceDependency,
+  user_service: dependency.UserServiceDependency,
   settings: request.Settings
 ) -> bool:
   return user_service.edit_settings(user, settings)
@@ -61,7 +65,7 @@ def edit_settings(
 @app.get("/")
 def posts_list(
   user: UserBySessionCodeDependency,
-  post_service: PostServiceDependency
+  post_service: dependency.PostServiceDependency
 ) -> List[response.Post]:
   user_id = None
 
@@ -73,7 +77,7 @@ def posts_list(
 @app.get("/liked")
 def liked_posts_list(
   user: UserBySessionCodeDependency,
-  post_service: PostServiceDependency
+  post_service: dependency.PostServiceDependency
 ) -> List[response.Post]:
   user_id = None
 
@@ -85,7 +89,7 @@ def liked_posts_list(
 @app.get("/{id}")
 def post_get(
   user: UserBySessionCodeDependency,
-  post_service: PostServiceDependency,
+  post_service: dependency.PostServiceDependency,
   id: int
 ) -> Union[response.Post, None]:
   user_id = None
@@ -98,7 +102,7 @@ def post_get(
 @app.post("/post/create")
 def post_create(
   user: UserBySessionCodeDependency,
-  post_service: PostServiceDependency,
+  post_service: dependency.PostServiceDependency,
   post: request.Post
 ) -> Union[int, None]:
   user_id = None
@@ -111,7 +115,7 @@ def post_create(
 @app.post("/like/create")
 def like_create(
   user: UserBySessionCodeDependency,
-  like_service: LikeServiceDependency,
+  like_service: dependency.LikeServiceDependency,
   post_id: Annotated[int, Body()]
 ) -> bool:
   user_id = None
@@ -124,7 +128,7 @@ def like_create(
 @app.post("/like/delete")
 def like_delete(
   user: UserBySessionCodeDependency,
-  like_service: LikeServiceDependency,
+  like_service: dependency.LikeServiceDependency,
   post_id: Annotated[int, Body()]
 ) -> bool:
   user_id = None

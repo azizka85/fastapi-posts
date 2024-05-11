@@ -6,6 +6,9 @@ class Like(repository.Like):
   __likes: Dict[int, Set[int]]
 
   def __init__(self):
+    self.clear()
+
+  def clear(self):
     self.__likes = {}
 
   def create(self, user_id: int, post_id: int):
