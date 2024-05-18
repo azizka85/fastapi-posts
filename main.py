@@ -1,3 +1,4 @@
+import os
 from dotenv import load_dotenv
 from typing import Annotated, Union, List
 
@@ -16,7 +17,7 @@ app = FastAPI()
 app.add_middleware(
   CORSMiddleware,
   allow_origins=[
-    'http://localhost:3000'
+    os.getenv('FRONTEND_HOST') # type: ignore
   ],
   allow_credentials=True,
   allow_methods=["*"],
